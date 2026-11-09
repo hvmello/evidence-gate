@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: evidence-gate
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
