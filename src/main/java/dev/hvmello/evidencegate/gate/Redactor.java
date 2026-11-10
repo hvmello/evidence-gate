@@ -25,7 +25,7 @@ public final class Redactor {
     public static final String PATIENT_NAME = "[PATIENT_NAME]";
     public static final String STAFF_NAME = "[STAFF_NAME]";
 
-    private static final String SEPARATOR = "[ .-]{0,3}";
+    private static final String SEPARATOR = "[ .-]{0,4}";
 
     // Order matters. Links and e-mails go before names so that a name inside them cannot split the match;
     // CPF goes before phone because an unformatted CPF would otherwise match as a phone plus a stray digit.
@@ -94,7 +94,7 @@ public final class Redactor {
     }
 
     private static List<Pattern> namePatterns(String fullName) {
-        return List.of(clean(fullName).split("[ '’-]+")).stream()
+        return List.of(clean(fullName).split("[ '’\u00B4`-]+")).stream()
                 .map(Redactor::stripAccents)
                 .filter(token -> token.length() >= 2 && !NAME_PARTICLES.contains(token))
                 .map(Redactor::tokenPattern)
