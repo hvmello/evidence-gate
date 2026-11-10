@@ -52,6 +52,24 @@ class RedactorTest {
         assertThat(redact(input)).isEqualTo(expected);
     }
 
+    @ParameterizedTest
+    @CsvSource({
+        "12345678909, [CPF]",
+        "62981234567, [PHONE]",
+        "11987654321, [PHONE]",
+        "06298123456, [PHONE]",
+        "99999999999, [PHONE]",
+        "62981234587, [CPF]",
+        "12345678900, [CPF]",
+        "11111111111, [CPF]",
+        "123.456.789-00, [CPF]",
+    })
+    void digitOnlyRunsAreLabelledByCheckDigits(String input, String expected) {
+        var result = redact("fone " + input + " ok");
+
+        assertThat(result).isEqualTo("fone " + expected + " ok").doesNotContainPattern("\\d");
+    }
+
     private String redactWithName(String name, String body) {
         var conversation = new Conversation("s-1", true, name, "", List.of(new Message(1, Speaker.PATIENT, body)));
         return redactor.redact(conversation).messages().getFirst().text();
