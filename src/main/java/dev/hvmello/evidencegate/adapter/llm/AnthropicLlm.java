@@ -126,11 +126,17 @@ public final class AnthropicLlm implements LlmPort {
             LOG.warn("Model call failed: {}", e.getClass().getName());
             return new Result.Failure<>(FailureCode.TRANSPORT);
         }
-        if ("refusal".equals(rawStopReason(response))) {
+        // Only end_turn is a complete answer; every other or unknown stop reason fails closed.
+        var stopReason = rawStopReason(response);
+        if ("refusal".equals(stopReason)) {
             return new Result.Failure<>(FailureCode.REFUSAL);
         }
-        if (response.finishReason() == FinishReason.LENGTH) {
+        if ("max_tokens".equals(stopReason) || "model_context_window_exceeded".equals(stopReason)
+                || response.finishReason() == FinishReason.LENGTH) {
             return new Result.Failure<>(FailureCode.TRUNCATED);
+        }
+        if (!"end_turn".equals(stopReason)) {
+            return new Result.Failure<>(FailureCode.INVALID_OUTPUT);
         }
         var text = response.aiMessage() == null ? null : response.aiMessage().text();
         if (text == null || text.isBlank()) {

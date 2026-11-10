@@ -31,7 +31,7 @@ class LlmWiringTest {
 
     @Test
     void anthropicWithoutAKeyFailsAtStartup() {
-        runner.withPropertyValues("evidence-gate.llm.provider=anthropic")
+        runner.withPropertyValues("evidence-gate.llm.provider=anthropic", "ANTHROPIC_API_KEY=")
                 .run(context -> {
                     assertThat(context).hasFailed();
                     assertThat(context.getStartupFailure()).hasStackTraceContaining("ANTHROPIC_API_KEY");

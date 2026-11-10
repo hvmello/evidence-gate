@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -166,6 +167,23 @@ class AnthropicLlmTest {
         var llm = llm();
         assertThat(llm.classify("x")).isEqualTo(new Result.Failure<>(FailureCode.TRUNCATED));
         assertThat(llm.draft(Intent.END, "x")).isEqualTo(new Result.Failure<>(FailureCode.TRUNCATED));
+    }
+
+    @Test
+    void contextWindowExceededMapsToTruncatedForBothCalls() throws Exception {
+        stub("model_context_window_exceeded", "half a reply");
+        var llm = llm();
+        assertThat(llm.classify("x")).isEqualTo(new Result.Failure<>(FailureCode.TRUNCATED));
+        assertThat(llm.draft(Intent.END, "x")).isEqualTo(new Result.Failure<>(FailureCode.TRUNCATED));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"pause_turn", "tool_use", "stop_sequence", "something_new"})
+    void otherStopReasonsMapToInvalidOutputForBothCalls(String stopReason) throws Exception {
+        stub(stopReason, VALID);
+        var llm = llm();
+        assertThat(llm.classify("x")).isEqualTo(new Result.Failure<>(FailureCode.INVALID_OUTPUT));
+        assertThat(llm.draft(Intent.END, "x")).isEqualTo(new Result.Failure<>(FailureCode.INVALID_OUTPUT));
     }
 
     static Stream<Arguments> invalidClassifications() {
