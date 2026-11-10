@@ -43,6 +43,11 @@
             <version>${archunit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-anthropic</artifactId>
+            <version>1.23.0</version>
+        </dependency>
     </dependencies>
 
     <build>
