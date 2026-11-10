@@ -19,6 +19,7 @@
 
     <properties>
         <java.version>21</java.version>
+        <langchain4j.version>1.23.0</langchain4j.version>
         <archunit.version>1.5.1</archunit.version>
         <pitest.version>1.30.2</pitest.version>
         <pitest-junit5.version>1.2.3</pitest-junit5.version>
@@ -32,6 +33,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-anthropic</artifactId>
+            <version>${langchain4j.version}</version>
         </dependency>
 
         <dependency>
