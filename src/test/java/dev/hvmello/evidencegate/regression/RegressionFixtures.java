@@ -17,7 +17,7 @@ import tools.jackson.databind.json.JsonMapper;
  */
 final class RegressionFixtures {
 
-    static final String VERSION = "v2";
+    static final String VERSION = "v3";
 
     private static final JsonMapper MAPPER =
             JsonMapper.builder().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).build();

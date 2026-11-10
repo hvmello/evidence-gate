@@ -43,6 +43,9 @@ public final class PolicyFilter {
     // Isolated single letters separated by non-alphanumerics, three or more in a row: "d e p r e s s a", "p-i-x".
     private static final Pattern SPACED_LETTERS = Pattern.compile(
             START + "\\p{L}(?:[^\\p{L}\\p{N}]+\\p{L}){2,}" + END);
+    // Accents are already folded away: a, e, o, and "é" and "à" become e and a.
+    private static final String ONE_LETTER_WORDS = "aeo";
+    private static final Pattern INNOCENT_WORDS = Pattern.compile(START + "depressa" + END);
     private static final Pattern SEPARATORS = Pattern.compile("[^\\p{L}\\p{N}]+");
 
     /** Returns the violated rule as a code, or empty when the draft is allowed. */
@@ -70,9 +73,43 @@ public final class PolicyFilter {
             return Optional.of("CONTACT_DATA");
         }
         return blocked(lower) || SPACED_LETTERS.matcher(lower).results()
-                .anyMatch(run -> blocked(SEPARATORS.matcher(run.group()).replaceAll("")))
+                .anyMatch(run -> blockedRun(SEPARATORS.matcher(run.group()).replaceAll("")))
                 ? Optional.of("BLOCKED_TERM")
                 : Optional.empty();
+    }
+
+    /**
+     * A run can swallow a real one-letter word next to the spaced term ("faca o p i x" joins to "opix"). The whole
+     * run is checked, then the run with such words trimmed off either end. Trimmed forms are not checked inside an
+     * innocent word, so "d e p r e s s a" stays allowed.
+     */
+    private static boolean blockedRun(String joined) {
+        if (blocked(joined)) {
+            return true;
+        }
+        var innocent = INNOCENT_WORDS.matcher(joined).results().toList();
+        var lead = 0;
+        while (lead < joined.length() && ONE_LETTER_WORDS.indexOf(joined.charAt(lead)) >= 0) {
+            lead++;
+        }
+        var tail = joined.length();
+        while (tail > 0 && ONE_LETTER_WORDS.indexOf(joined.charAt(tail - 1)) >= 0) {
+            tail--;
+        }
+        for (var from = 0; from <= lead; from++) {
+            for (var to = joined.length(); to >= Math.max(tail, from + 1); to--) {
+                if (from == 0 && to == joined.length()) {
+                    continue;
+                }
+                var start = from;
+                var end = to;
+                if (innocent.stream().noneMatch(w -> w.start() <= start && end <= w.end())
+                        && blocked(joined.substring(from, to))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static boolean blocked(String text) {

@@ -43,6 +43,11 @@ class PolicyFilterTest {
         "{NAME}, ú l t i m a  c h a n c e de voltar. | BLOCKED_TERM",
         "{NAME}, temos d . e . s . c . o . n . t . o hoje. | BLOCKED_TERM",
         "{NAME}, ultimachance de voltar. | BLOCKED_TERM",
+        "{NAME}, faça o P I X hoje. | BLOCKED_TERM",
+        "{NAME}, pague com P I X e ganhe brinde. | BLOCKED_TERM",
+        "{NAME}, esta é a ú l t i m a  c h a n c e. | BLOCKED_TERM",
+        "{NAME}, passou a c r i s e? | BLOCKED_TERM",
+        "{NAME}, e u r g e n t e. | BLOCKED_TERM",
     })
     void blocks(String draft, String code) {
         assertThat(filter.violation(draft)).contains(code);

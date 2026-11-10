@@ -1,6 +1,6 @@
 # Regression fixtures
 
-Fixture version: **v2**. Synthetic data in Brazilian Portuguese only. Each suite prints this version.
+Fixture version: **v3**. Synthetic data in Brazilian Portuguese only. Each suite prints this version.
 
 One JSON object per line (JSON Lines). Unknown fields, malformed lines and duplicate ids fail the load.
 

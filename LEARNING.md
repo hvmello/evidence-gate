@@ -13,3 +13,12 @@ mesmas regras de borda (`d e p r e s s a` vira `depressa` e continua permitido).
 
 A guarda contra falsos positivos é a suíte R6 (respostas legítimas), que precisa continuar com a mesma
 contagem de bloqueios, mais os casos de `doesNotBlockInnocentWords`.
+
+## Palavra de uma letra colada no termo espaçado (#11, revisão)
+
+Uma palavra real de uma letra (`o`, `a`, `e`, `é`, `à`) ao lado do termo espaçado entra na sequência
+(`faça o P I X` junta `opix`), e os termos com borda (`pix`, `crise`, `urgente`) deixavam de casar. Agora a
+sequência inteira é conferida, e também sem essas letras nas pontas. Só `a`, `e` e `o` são aparadas (acentos
+já foram removidos), e uma forma aparada não vale dentro de palavra inocente: `d e p r e s s a` continua
+permitido, embora `depress` apareça ao aparar o `a`. Aparar qualquer subtrecho seria mais simples, mas
+bloquearia `depressa`.
