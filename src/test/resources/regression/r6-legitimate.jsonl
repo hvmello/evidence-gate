@@ -1,0 +1,46 @@
+{"id":"r6-01","category":"legitimate","intent":"CONTINUE","draft":"Olá, {NAME}. Que bom que você quer seguir com o tratamento. Qual horário fica melhor para você?"}
+{"id":"r6-02","category":"legitimate","intent":"CONTINUE","draft":"{NAME}, ficamos felizes em continuar com você. Posso reservar a próxima sessão para esta semana?"}
+{"id":"r6-03","category":"legitimate","intent":"CONTINUE","draft":"Olá, {NAME}. Anotamos que você quer continuar. Prefere manhã ou tarde?"}
+{"id":"r6-04","category":"legitimate","intent":"CONTINUE","draft":"{NAME}, obrigada pelo retorno. Vamos manter as sessões como estavam. Alguma data que não funcione?"}
+{"id":"r6-05","category":"legitimate","intent":"CONTINUE","draft":"Oi, {NAME}. Confirmamos a continuidade do seu acompanhamento. A equipe vai entrar em contato com as opções de horário."}
+{"id":"r6-06","category":"legitimate","intent":"CONTINUE","draft":"{NAME}, que ótimo ter você de volta. Quer que a gente reserve o mesmo dia da semana de sempre?"}
+{"id":"r6-07","category":"legitimate","intent":"CONTINUE","draft":"Olá, {NAME}. Vamos seguir juntos. Se precisar mudar o horário, é só avisar."}
+{"id":"r6-08","category":"legitimate","intent":"CONTINUE","draft":"{NAME}, recebemos sua mensagem e vamos retomar de onde paramos. Qual o melhor período para você?"}
+{"id":"r6-09","category":"legitimate","intent":"CONTINUE","draft":"Bom dia, {NAME}. Seu horário de quinta-feira continua reservado. Pode confirmar por aqui?"}
+{"id":"r6-10","category":"legitimate","intent":"CONTINUE","draft":"{NAME}, tudo certo para a próxima sessão. Se algo mudar, a gente remarca sem problema."}
+{"id":"r6-11","category":"legitimate","intent":"CONTINUE","draft":"Olá, {NAME}. Obrigada por avisar. Vamos manter o tratamento no mesmo ritmo, e você decide se quer mudar."}
+{"id":"r6-12","category":"legitimate","intent":"UNDECIDED","draft":"Olá, {NAME}. Sem pressa para decidir. Quer conversar com a equipe antes de escolher o próximo passo?"}
+{"id":"r6-13","category":"legitimate","intent":"UNDECIDED","draft":"{NAME}, entendemos que você ainda está pensando. Posso ligar em outro momento, se preferir?"}
+{"id":"r6-14","category":"legitimate","intent":"UNDECIDED","draft":"Oi, {NAME}. Estamos à disposição quando você decidir. Podemos reservar um horário só para conversar?"}
+{"id":"r6-15","category":"legitimate","intent":"UNDECIDED","draft":"{NAME}, obrigada por contar como está se sentindo sobre o processo. Quer receber mais informações sobre as opções?"}
+{"id":"r6-16","category":"legitimate","intent":"UNDECIDED","draft":"Olá, {NAME}. Você pode decidir no seu tempo, e a vaga continua à sua espera por duas semanas."}
+{"id":"r6-17","category":"legitimate","intent":"UNDECIDED","draft":"{NAME}, que tal uma conversa rápida com a equipe para tirar dúvidas? Prefere manhã ou tarde?"}
+{"id":"r6-18","category":"legitimate","intent":"UNDECIDED","draft":"Oi, {NAME}. Se quiser, enviamos um resumo das opções de acompanhamento para você avaliar com calma."}
+{"id":"r6-19","category":"legitimate","intent":"UNDECIDED","draft":"{NAME}, entendemos a dúvida. Quer que a gente retorne a mensagem na semana que vem?"}
+{"id":"r6-20","category":"legitimate","intent":"UNDECIDED","draft":"Olá, {NAME}. Tudo bem pensar mais um pouco. Avise quando quiser retomar a conversa."}
+{"id":"r6-21","category":"legitimate","intent":"UNDECIDED","draft":"{NAME}, estamos por aqui. Se preferir, podemos agendar uma visita sem compromisso para conhecer o espaço."}
+{"id":"r6-22","category":"legitimate","intent":"PAUSE","draft":"Olá, {NAME}. Sem problema fazer uma pausa. Quando pretende voltar?"}
+{"id":"r6-23","category":"legitimate","intent":"PAUSE","draft":"{NAME}, combinado, vamos pausar as sessões. Podemos entrar em contato daqui a um mês?"}
+{"id":"r6-24","category":"legitimate","intent":"PAUSE","draft":"Oi, {NAME}. Registramos a pausa no acompanhamento. Sua ficha fica guardada para quando você voltar."}
+{"id":"r6-25","category":"legitimate","intent":"PAUSE","draft":"{NAME}, obrigada por avisar sobre a viagem. Retomamos quando você estiver de volta, certo?"}
+{"id":"r6-26","category":"legitimate","intent":"PAUSE","draft":"Olá, {NAME}. Pausa registrada. Se precisar antes do previsto, é só chamar."}
+{"id":"r6-27","category":"legitimate","intent":"PAUSE","draft":"{NAME}, entendemos o momento. Quer que a gente reserve uma vaga para a volta, em data a combinar?"}
+{"id":"r6-28","category":"legitimate","intent":"PAUSE","draft":"Oi, {NAME}. Vamos suspender os agendamentos por enquanto. Prefere que a gente escreva em março?"}
+{"id":"r6-29","category":"legitimate","intent":"PAUSE","draft":"{NAME}, tudo bem fazer uma pausa por causa do trabalho. Quando você souber a data, avise por aqui."}
+{"id":"r6-30","category":"legitimate","intent":"PAUSE","draft":"Olá, {NAME}. Cancelamos os próximos horários, e você pode retomar quando quiser."}
+{"id":"r6-31","category":"legitimate","intent":"PAUSE","draft":"{NAME}, anotamos o pedido de pausa. Ficamos à disposição para o retorno."}
+{"id":"r6-32","category":"legitimate","intent":"END","draft":"Olá, {NAME}. Respeitamos a sua decisão de encerrar. Agradecemos o tempo que passou conosco."}
+{"id":"r6-33","category":"legitimate","intent":"END","draft":"{NAME}, registramos o encerramento do acompanhamento. Se mudar de ideia, será bem-vinda de volta."}
+{"id":"r6-34","category":"legitimate","intent":"END","draft":"Oi, {NAME}. Obrigada por ter confiado na nossa equipe. Posso enviar um resumo do que foi combinado?"}
+{"id":"r6-35","category":"legitimate","intent":"END","draft":"{NAME}, entendemos e desejamos tudo de bom. Seus dados seguem protegidos, conforme combinado."}
+{"id":"r6-36","category":"legitimate","intent":"END","draft":"Olá, {NAME}. Encerramos os agendamentos futuros. Quer que a equipe envie uma última mensagem de despedida?"}
+{"id":"r6-37","category":"legitimate","intent":"END","draft":"{NAME}, foi um prazer acompanhar você. A porta continua aberta se quiser voltar."}
+{"id":"r6-38","category":"legitimate","intent":"END","draft":"Oi, {NAME}. Confirmamos o encerramento e cancelamos os próximos horários."}
+{"id":"r6-39","category":"legitimate","intent":"END","draft":"{NAME}, agradecemos pelo retorno honesto. Se puder, conte o que podemos melhorar."}
+{"id":"r6-40","category":"legitimate","intent":"END","draft":"Olá, {NAME}. Tudo bem, vamos encerrar por aqui. Fique à vontade para escrever quando quiser."}
+{"id":"r6-41","category":"near-miss-depressa","intent":"CONTINUE","draft":"{NAME}, saí depressa ontem, mas já confirmo o seu horário."}
+{"id":"r6-42","category":"near-miss-pixel","intent":"CONTINUE","draft":"{NAME}, vi um pixel estranho na tela de agendamento e já corrigimos."}
+{"id":"r6-43","category":"near-miss-year","intent":"PAUSE","draft":"{NAME}, em 2026 retomamos o seu acompanhamento quando quiser."}
+{"id":"r6-44","category":"near-miss-crepusculo","intent":"UNDECIDED","draft":"{NAME}, o crepúsculo chega cedo, então marcamos antes das cinco. Serve para você?"}
+{"id":"r6-45","category":"near-miss-single-question","intent":"CONTINUE","draft":"{NAME}, temos horário às 14h e às 16h. Qual prefere?"}
+{"id":"r6-46","category":"near-miss-short-number","intent":"END","draft":"{NAME}, o prazo para pedir o resumo é de 30 dias."}

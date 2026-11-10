@@ -12,6 +12,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 /**
@@ -25,19 +27,23 @@ public final class Redactor {
     public static final String PATIENT_NAME = "[PATIENT_NAME]";
     public static final String STAFF_NAME = "[STAFF_NAME]";
 
-    private static final String SEPARATOR = "[ .-]{0,3}";
+    private static final String SEPARATOR = "[ .-]{0,4}";
+
+    private static final Pattern PHONE = Pattern.compile("(?<!\\d)(?:\\+?55" + SEPARATOR + ")?(?:\\(?0?\\d{2}\\)?" + SEPARATOR + ")?"
+            + "(?:(?:9" + SEPARATOR + ")?\\d{4}" + SEPARATOR + "\\d{4}|9\\d{2}[ .-]\\d{3}[ .-]\\d{3})(?!\\d)");
 
     // Order matters. Links and e-mails go before names so that a name inside them cannot split the match;
     // CPF goes before phone because an unformatted CPF would otherwise match as a phone plus a stray digit.
+    // It now hands digit-only runs with invalid check digits to the phone label when they fit the phone pattern.
     // The lookbehinds and possessive quantifiers keep matching linear on long input.
     private static final List<Rule> RULES = List.of(
             new Rule(Pattern.compile("(?i)(?<![\\p{L}\\p{N}])(?:https?://|www\\.)\\S++"), "[LINK]"),
             new Rule(Pattern.compile(
                     "(?<![\\p{L}\\p{N}._%+-])[\\p{L}\\p{N}._%+-]++@[\\p{L}\\p{N}-]++(?:\\.[\\p{L}\\p{N}-]++)++"), "[EMAIL]"),
             new Rule(Pattern.compile("(?i)R\\$ ?[\\d.,]*\\d"), "[AMOUNT]"),
-            new Rule(Pattern.compile("(?<!\\d)\\d{3}[. -]?\\d{3}[. -]?\\d{3}[. -]?\\d{2}(?!\\d)"), "[CPF]"),
-            new Rule(Pattern.compile("(?<!\\d)(?:\\+?55" + SEPARATOR + ")?(?:\\(?0?\\d{2}\\)?" + SEPARATOR + ")?"
-                    + "(?:(?:9" + SEPARATOR + ")?\\d{4}" + SEPARATOR + "\\d{4}|9\\d{2}[ .-]\\d{3}[ .-]\\d{3})(?!\\d)"), "[PHONE]"));
+            new Rule(Pattern.compile("(?<!\\d)\\d{3}[. -]?\\d{3}[. -]?\\d{3}[. -]?\\d{2}(?!\\d)"),
+                    Redactor::cpfOrPhone),
+            new Rule(PHONE, "[PHONE]"));
 
     private static final Set<String> NAME_PARTICLES = Set.of("de", "da", "do", "das", "dos", "e");
 
@@ -45,7 +51,12 @@ public final class Redactor {
             'a', "[aáàâãä]", 'e', "[eéèêë]", 'i', "[iíìîï]", 'o', "[oóòôõö]",
             'u', "[uúùûü]", 'c', "[cç]", 'n', "[nñ]");
 
-    private record Rule(Pattern pattern, String placeholder) { }
+    private record Rule(Pattern pattern, Function<MatchResult, String> placeholder) {
+
+        Rule(Pattern pattern, String placeholder) {
+            this(pattern, match -> placeholder);
+        }
+    }
 
     public record RedactedMessage(int id, Speaker speaker, String text) { }
 
@@ -87,6 +98,32 @@ public final class Redactor {
         return text.trim();
     }
 
+    private static String cpfOrPhone(MatchResult match) {
+        var text = match.group();
+        // The regex only allows digits and separators, so length 11 means no separators.
+        if (text.length() != 11 || hasValidCpfCheckDigits(text)) {
+            return "[CPF]";
+        }
+        // Every run stays redacted; an invalid run that is not phone-shaped is still treated as a CPF.
+        return PHONE.matcher(text).matches() ? "[PHONE]" : "[CPF]";
+    }
+
+    private static boolean hasValidCpfCheckDigits(String digits) {
+        if (digits.chars().distinct().count() == 1) {
+            return false;
+        }
+        for (int n = 9; n <= 10; n++) {
+            int sum = 0;
+            for (int i = 0; i < n; i++) {
+                sum += (digits.charAt(i) - '0') * (n + 1 - i);
+            }
+            if (sum * 10 % 11 % 10 != digits.charAt(n) - '0') {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static String clean(String text) {
         return Normalizer.normalize(text, Normalizer.Form.NFC)
                 .replaceAll("\\p{Cf}", "")
@@ -94,7 +131,7 @@ public final class Redactor {
     }
 
     private static List<Pattern> namePatterns(String fullName) {
-        return List.of(clean(fullName).split("[ '’-]+")).stream()
+        return List.of(clean(fullName).split("[ '’\u00B4`-]+")).stream()
                 .map(Redactor::stripAccents)
                 .filter(token -> token.length() >= 2 && !NAME_PARTICLES.contains(token))
                 .map(Redactor::tokenPattern)

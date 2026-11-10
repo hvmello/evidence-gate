@@ -91,7 +91,7 @@ Estimates are focused hours and are not commitments.
 | | Milestone | Hours | Done when | Status |
 |---|---|--:|---|---|
 | M0 | Skeleton: build, CI, architecture rules | 2 | CI green on a clean clone | Local build green; CI not run |
-| M1 | Deterministic pipeline, `ScriptedLlm`, API | 14 | R1 to R6 measured on fixtures | Code and 52 tests done; fixtures and PIT pending |
+| M1 | Deterministic pipeline, `ScriptedLlm`, API | 14 | R1 to R6 measured on fixtures | Fixtures done; PIT pending (#12) |
 | M2a | Spike, go or no-go | 1 | Structured output through `customParameters`, refusal detection and Jackson fit verified; fallback chosen | |
 | M2b | Real adapter | 11 | Contract suite asserts shape and failure mapping for scripted and real adapters | |
 | M3 | Evaluation and `RecordedLlm` | 20 | E1 to E7 published; prompts tuned on train split only; CI replays committed real responses | |

@@ -42,12 +42,32 @@ class RedactorTest {
         "mande para joão@x.com hoje | mande para [EMAIL] hoje",
         "mande para a@b-c.sub-d.com hoje | mande para [EMAIL] hoje",
         "ligue 98123 - 4567 ok | ligue [PHONE] ok",
+        "ligue 98123 -- 4567 ok | ligue [PHONE] ok",
+        "ligue (62) -- 98123-4567 ok | ligue [PHONE] ok",
         "ligue 981 234 567 ok | ligue [PHONE] ok",
         "ligue 62.98123-4567 ok | ligue [PHONE] ok",
         "cpf 123-456-789-09 ok | cpf [CPF] ok",
     })
     void replacesKnownFormats(String input, String expected) {
         assertThat(redact(input)).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "12345678909, [CPF]",
+        "62981234567, [PHONE]",
+        "11987654321, [PHONE]",
+        "06298123456, [PHONE]",
+        "99999999999, [PHONE]",
+        "62981234587, [CPF]",
+        "12345678900, [CPF]",
+        "11111111111, [CPF]",
+        "123.456.789-00, [CPF]",
+    })
+    void digitOnlyRunsAreLabelledByCheckDigits(String input, String expected) {
+        var result = redact("fone " + input + " ok");
+
+        assertThat(result).isEqualTo("fone " + expected + " ok").doesNotContainPattern("\\d");
     }
 
     private String redactWithName(String name, String body) {
@@ -66,6 +86,14 @@ class RedactorTest {
         assertThat(redactWithName("Ana-Clara", "a Clara veio")).isEqualTo("a [PATIENT_NAME] veio");
         assertThat(redactWithName("Sant'Anna", "o Sant’Anna veio"))
                 .isEqualTo("o [PATIENT_NAME]’[PATIENT_NAME] veio");
+    }
+
+    @Test
+    void namesAreSplitOnAcuteAccentAndBacktick() {
+        assertThat(redactWithName("Sant\u00B4Anna", "a Anna veio")).isEqualTo("a [PATIENT_NAME] veio");
+        assertThat(redactWithName("Sant`Anna", "a Anna veio")).isEqualTo("a [PATIENT_NAME] veio");
+        assertThat(redactWithName("Sant\u00B4Anna", "o Sant'Anna veio"))
+                .isEqualTo("o [PATIENT_NAME]'[PATIENT_NAME] veio");
     }
 
     @Test

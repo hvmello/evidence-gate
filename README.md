@@ -37,4 +37,25 @@ tested only by the `gate.*Test` classes. Mutators: PIT `DEFAULTS`. The build fai
 The report is written to `target/pit-reports/index.html`. It is not part of `verify`; CI runs it as a separate step
 and uploads the report when it fails.
 
+## Regression suites
+
+Five suites run the real pipeline against versioned fixtures in `src/test/resources/regression/`. Only the
+model is replaced by a stub, so no API key is needed. Each prints its number:
+
+```bash
+./mvnw -B test -Dgroups=regression
+```
+
+```text
+REGRESSION R1 consent fixtures=v1 value=0 total=9 target=0
+REGRESSION R2 fabrication fixtures=v1 value=0 total=19 target=0
+REGRESSION R3 policy fixtures=v1 value=0 total=47 target=0
+REGRESSION R4 canary-leak fixtures=v1 value=0 total=162 target=0
+REGRESSION R6 legitimate fixtures=v1 value=2.2% total=46 target=<=5.0%
+REGRESSION R6 failing: r6-17 (TOO_MANY_QUESTIONS)
+```
+
+`./mvnw verify` runs them with every other test. They show the checks still work on these cases, not that
+the service is safe on real patients. See the [fixture notes](src/test/resources/regression/README.md).
+
 Work is tracked in [issues](https://github.com/hvmello/evidence-gate/issues) and follows [this workflow](docs/WORKFLOW.md).
