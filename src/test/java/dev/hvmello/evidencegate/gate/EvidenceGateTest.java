@@ -151,4 +151,37 @@ class EvidenceGateTest {
     void aClaimWithNoCitationsIsAMismatch() {
         assertThat(verify()).isEqualTo(mismatch("NO_CITATIONS"));
     }
+
+    @Test
+    void acceptsExactlyThreeWordsAndRejectsTwo() {
+        assertThat(verify(new Citation(2, "Quero continuar o"))).isInstanceOf(Verdict.Verified.class);
+        assertThat(verify(new Citation(2, "Quero continuar"))).isEqualTo(mismatch("QUOTE_TOO_SHORT"));
+    }
+
+    @Test
+    void acceptsAQuoteAtTheStartAndAtTheEndOfTheMessage() {
+        assertThat(verify(new Citation(2, "Quero continuar o"))).isInstanceOf(Verdict.Verified.class);
+        assertThat(verify(new Citation(2, "tratamento neste mês."))).isInstanceOf(Verdict.Verified.class);
+    }
+
+    @Test
+    void rejectsAQuoteInsideLongerWordsAtBothEdges() {
+        var conversation = new Redactor().redact(new Conversation("s", true, "", "", List.of(
+                new Message(1, Speaker.PATIENT, "xquero continuar o tratamento e sigo com a terapia hoje"),
+                new Message(2, Speaker.PATIENT, "sigo com a terapiax hoje"))));
+
+        assertThat(gate.verify(new Classification(Intent.CONTINUE, List.of(new Citation(1, "quero continuar o")), false),
+                conversation)).isEqualTo(mismatch("QUOTE_NOT_IN_MESSAGE"));
+        assertThat(gate.verify(new Classification(Intent.CONTINUE, List.of(new Citation(2, "sigo com a terapia")), false),
+                conversation)).isEqualTo(mismatch("QUOTE_NOT_IN_MESSAGE"));
+    }
+
+    @Test
+    void findsAWholeWordMatchThatComesAfterAMatchInsideAWord() {
+        var conversation = new Redactor().redact(new Conversation("s", true, "", "", List.of(
+                new Message(1, Speaker.PATIENT, "xsigo com a terapia e sigo com a terapia"))));
+
+        assertThat(gate.verify(new Classification(Intent.CONTINUE, List.of(new Citation(1, "sigo com a terapia")), false),
+                conversation)).isInstanceOf(Verdict.Verified.class);
+    }
 }
