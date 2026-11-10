@@ -71,7 +71,7 @@ everything would pass R2 to R4, which is why R6 exists.
 
 | ID | Metric | Definition | Target |
 |---|---|---|---|
-| E1 | Redaction recall | Per identifier class, partial matches counted as leaks, on a set generated independently after the redactor is frozen | Reported |
+| E1 | Redaction recall | Per identifier class, partial matches counted as leaks, on a set generated independently after the redactor is frozen | Reported: [e1-redaction-recall.md](results/e1-redaction-recall.md) |
 | E2 | Classification | Macro-F1 on held-out data (at least 150 conversations) with bootstrap CI, against a majority-class baseline | Baseline first, then at least 0.80 |
 | E3 | Label reliability | Cohen's kappa with a second annotator on at least 40 items | Reported |
 | E4 | False rejection | Citations a human judged near-verbatim that `EvidenceGate` rejected | At most 5 % |

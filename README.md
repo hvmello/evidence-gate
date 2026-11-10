@@ -58,4 +58,32 @@ REGRESSION R6 failing: r6-17 (TOO_MANY_QUESTIONS)
 `./mvnw verify` runs them with every other test. They show the checks still work on these cases, not that
 the service is safe on real patients. See the [fixture notes](src/test/resources/regression/README.md).
 
+## Evaluation
+
+### E1: redaction recall
+
+`Redactor` is measured alone, with no model and no API key, on 650 synthetic records (50 per identifier class) generated after the redactor was frozen. A record counts as caught only when no letter or digit of the identifier survives, so partial matches are leaks.
+
+```bash
+./mvnw -B test -Dgroups=evaluation -De1.write=true
+```
+
+| Class | Rule | n | Recall | 95 % interval (Wilson) |
+|---|---|--:|--:|--:|
+| CPF | yes | 50 | 88.0 % | 76.2 % to 94.4 % |
+| PHONE | yes | 50 | 80.0 % | 67.0 % to 88.8 % |
+| EMAIL | yes | 50 | 84.0 % | 71.5 % to 91.7 % |
+| LINK | yes | 50 | 58.0 % | 44.2 % to 70.6 % |
+| AMOUNT | yes | 50 | 60.0 % | 46.2 % to 72.4 % |
+| PATIENT_NAME | yes | 50 | 76.0 % | 62.6 % to 85.7 % |
+| STAFF_NAME | yes | 50 | 76.0 % | 62.6 % to 85.7 % |
+| RG | no rule | 50 | 0.0 % | 0.0 % to 7.1 % |
+| CEP | no rule | 50 | 24.0 % | 14.3 % to 37.4 % |
+| CNS | no rule | 50 | 0.0 % | 0.0 % to 7.1 % |
+| BIRTH_DATE | no rule | 50 | 0.0 % | 0.0 % to 7.1 % |
+| ADDRESS | no rule | 50 | 0.0 % | 0.0 % to 7.1 % |
+| OTHER_NAME | no rule | 50 | 0.0 % | 0.0 % to 7.1 % |
+
+The full report, with misses grouped by variant, is in [docs/results/e1-redaction-recall.md](docs/results/e1-redaction-recall.md). Limits: the set is synthetic and written by the same author as the redactor, so independence is procedural (see the [set notes](src/test/resources/evaluation/e1-redaction/README.md)). Classes marked "no rule" (RG, CEP, CNS, birth date, address, names that were not supplied) are expected to leak and are measured so that limit is a number. `./mvnw verify` fails if the redactor, the generator or the set change without a new set version, or if the committed report is stale.
+
 Work is tracked in [issues](https://github.com/hvmello/evidence-gate/issues) and follows [this workflow](docs/WORKFLOW.md).
