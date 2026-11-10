@@ -42,6 +42,8 @@ class RedactorTest {
         "mande para joão@x.com hoje | mande para [EMAIL] hoje",
         "mande para a@b-c.sub-d.com hoje | mande para [EMAIL] hoje",
         "ligue 98123 - 4567 ok | ligue [PHONE] ok",
+        "ligue 98123 -- 4567 ok | ligue [PHONE] ok",
+        "ligue (62) -- 98123-4567 ok | ligue [PHONE] ok",
         "ligue 981 234 567 ok | ligue [PHONE] ok",
         "ligue 62.98123-4567 ok | ligue [PHONE] ok",
         "cpf 123-456-789-09 ok | cpf [CPF] ok",
@@ -66,6 +68,14 @@ class RedactorTest {
         assertThat(redactWithName("Ana-Clara", "a Clara veio")).isEqualTo("a [PATIENT_NAME] veio");
         assertThat(redactWithName("Sant'Anna", "o Sant’Anna veio"))
                 .isEqualTo("o [PATIENT_NAME]’[PATIENT_NAME] veio");
+    }
+
+    @Test
+    void namesAreSplitOnAcuteAccentAndBacktick() {
+        assertThat(redactWithName("Sant\u00B4Anna", "a Anna veio")).isEqualTo("a [PATIENT_NAME] veio");
+        assertThat(redactWithName("Sant`Anna", "a Anna veio")).isEqualTo("a [PATIENT_NAME] veio");
+        assertThat(redactWithName("Sant\u00B4Anna", "o Sant'Anna veio"))
+                .isEqualTo("o [PATIENT_NAME]'[PATIENT_NAME] veio");
     }
 
     @Test
