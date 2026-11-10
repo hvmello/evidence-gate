@@ -34,6 +34,15 @@ class PolicyFilterTest {
         "{NAME}, __depressão__ passou. | BLOCKED_TERM",
         "{NAME}, pague com _pix_ hoje. | BLOCKED_TERM",
         "｛NAME｝, tudo bem. | NAME_MARKER_MISSING",
+        "{NAME}, sua d e p r e s s ã o passou. | BLOCKED_TERM",
+        "{NAME}, D.E.P.R.E.S.S.Ã.O passou. | BLOCKED_TERM",
+        "{NAME}, sua a n s i e d a d e melhorou. | BLOCKED_TERM",
+        "{NAME}, pague com p-i-x. | BLOCKED_TERM",
+        "{NAME}, pague com P I X hoje. | BLOCKED_TERM",
+        "{NAME}, o d_i_a_g_n_ó_s_t_i_c_o saiu. | BLOCKED_TERM",
+        "{NAME}, ú l t i m a  c h a n c e de voltar. | BLOCKED_TERM",
+        "{NAME}, temos d . e . s . c . o . n . t . o hoje. | BLOCKED_TERM",
+        "{NAME}, ultimachance de voltar. | BLOCKED_TERM",
     })
     void blocks(String draft, String code) {
         assertThat(filter.violation(draft)).contains(code);
@@ -44,9 +53,19 @@ class PolicyFilterTest {
         "{NAME}, saí depressa ontem.",
         "{NAME}, vi um pixel na tela.",
         "{NAME}, em 2026 voltamos.",
+        "{NAME}, saí d e p r e s s a ontem.",
+        "{NAME}, escolha a opção A, B ou C.",
+        "{NAME}, as opções A, B e C seguem abertas.",
+        "{NAME}, sinto mais calma hoje.",
+        "{NAME}, a e i o u.",
     })
     void doesNotBlockInnocentWords(String draft) {
         assertThat(filter.violation(draft)).isEmpty();
+    }
+
+    @Test
+    void zeroWidthCharacterBetweenSeparatedLettersStillBlocks() {
+        assertThat(filter.violation("{NAME}, sua d​ e p r e s s ã o passou.")).contains("BLOCKED_TERM");
     }
 
     @Test

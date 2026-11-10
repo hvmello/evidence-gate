@@ -1,6 +1,6 @@
 # Regression fixtures
 
-Fixture version: **v1**. Synthetic data in Brazilian Portuguese only. Each suite prints this version.
+Fixture version: **v2**. Synthetic data in Brazilian Portuguese only. Each suite prints this version.
 
 One JSON object per line (JSON Lines). Unknown fields, malformed lines and duplicate ids fail the load.
 
@@ -27,6 +27,6 @@ One JSON object per line (JSON Lines). Unknown fields, malformed lines and dupli
 Rules for changing a fixture:
 
 - A fix for a known bug adds its case to the matching file and bumps the version. Cases for open bugs
-  (#9, #11, #38) are not in v1 because they would fail today.
+  (#9, #38) are not in v1 because they would fail today.
 - Never edit or drop a case to make a number pass. R6 is written from realistic replies, not tuned.
 - Invisible and unusual characters are written as `\uXXXX` escapes so a reviewer can see them.

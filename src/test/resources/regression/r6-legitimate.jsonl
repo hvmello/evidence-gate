@@ -44,3 +44,4 @@
 {"id":"r6-44","category":"near-miss-crepusculo","intent":"UNDECIDED","draft":"{NAME}, o crepúsculo chega cedo, então marcamos antes das cinco. Serve para você?"}
 {"id":"r6-45","category":"near-miss-single-question","intent":"CONTINUE","draft":"{NAME}, temos horário às 14h e às 16h. Qual prefere?"}
 {"id":"r6-46","category":"near-miss-short-number","intent":"END","draft":"{NAME}, o prazo para pedir o resumo é de 30 dias."}
+{"id": "r6-47", "category": "legitimate", "intent": "UNDECIDED", "draft": "{NAME}, podemos seguir de três formas: A, B ou C. Qual delas faz mais sentido para você?"}

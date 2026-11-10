@@ -9,8 +9,10 @@ import java.util.regex.Pattern;
 /**
  * Deterministic rules for a draft reply. The model's own opinion of its draft is never consulted.
  *
- * <p>A term list catches what it lists and nothing else: paraphrases and look-alike letters from other
- * alphabets pass, and are measured by the evaluation suite. A human reviews every draft that passes.
+ * <p>A term list catches what it lists and nothing else. Letters separated by spaces or punctuation
+ * ({@code d e p r e s s a o}, {@code p-i-x}) are joined before matching. Arbitrary splits inside a word
+ * ({@code depre ssao}), paraphrases and look-alike letters from other alphabets still pass, and are measured
+ * by the evaluation suite. A human reviews every draft that passes.
  */
 public final class PolicyFilter {
 
@@ -36,7 +38,12 @@ public final class PolicyFilter {
             Pattern.compile("desconto"),
             Pattern.compile("promoc"),
             Pattern.compile(START + "urgente"),
-            Pattern.compile(START + "ultima chance" + END));
+            Pattern.compile(START + "ultima ?chance" + END));
+
+    // Isolated single letters separated by non-alphanumerics, three or more in a row: "d e p r e s s a", "p-i-x".
+    private static final Pattern SPACED_LETTERS = Pattern.compile(
+            START + "\\p{L}(?:[^\\p{L}\\p{N}]+\\p{L}){2,}" + END);
+    private static final Pattern SEPARATORS = Pattern.compile("[^\\p{L}\\p{N}]+");
 
     /** Returns the violated rule as a code, or empty when the draft is allowed. */
     public Optional<String> violation(String draft) {
@@ -62,8 +69,13 @@ public final class PolicyFilter {
         if (CONTACT_DATA.matcher(lower).find()) {
             return Optional.of("CONTACT_DATA");
         }
-        return BLOCKED_TERMS.stream().anyMatch(term -> term.matcher(lower).find())
+        return blocked(lower) || SPACED_LETTERS.matcher(lower).results()
+                .anyMatch(run -> blocked(SEPARATORS.matcher(run.group()).replaceAll("")))
                 ? Optional.of("BLOCKED_TERM")
                 : Optional.empty();
+    }
+
+    private static boolean blocked(String text) {
+        return BLOCKED_TERMS.stream().anyMatch(term -> term.matcher(text).find());
     }
 }
