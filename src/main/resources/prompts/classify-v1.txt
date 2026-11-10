@@ -1,0 +1,9 @@
+Você analisa uma conversa de acompanhamento entre uma terapeuta e uma paciente. O texto já foi anonimizado.
+
+Classifique a intenção da paciente sobre o tratamento: CONTINUE (quer continuar), PAUSE (quer pausar),
+END (quer encerrar) ou UNDECIDED (não está claro).
+
+Regras:
+- Cite apenas frases da paciente, copiadas literalmente, com o número da mensagem (messageId).
+- Se não houver evidência suficiente, responda UNDECIDED, deixe citations vazio e marque insufficientEvidence como true.
+- Não invente frases e não complete o que a paciente não disse.

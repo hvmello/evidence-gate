@@ -38,3 +38,22 @@ asserção que falta. O score é mortos dividido por gerados.
 - `pitest:mutationCoverage` chamado direto não recompila os testes: rode `test-compile` antes, senão o PIT mede
   testes velhos.
 - O score só vale para o escopo e para o conjunto de mutadores escolhidos (aqui, pacote `gate` e `DEFAULTS`).
+
+## Adaptador do modelo real (#14): recusa escondida e dois Jackson
+
+O `finishReason()` do LangChain4j junta `refusal` e qualquer outro motivo desconhecido em `OTHER`. Para o
+pipeline isso importa: recusa e texto vazio pedem tratamentos diferentes. O corpo bruto da resposta
+(`AnthropicChatResponseMetadata.rawHttpResponse().body()`) ainda traz o `stop_reason` original, então o adaptador
+lê dali. Se o corpo bruto não existir, o motivo é "desconhecido" e as outras checagens continuam: texto vazio
+vira `INVALID_OUTPUT`, nunca sucesso.
+
+A ordem das checagens é fixa: recusa, depois truncamento (`max_tokens`), depois saída inválida, e por fim
+falha de transporte (qualquer exceção da chamada). Cada código leva a uma decisão diferente rio abaixo.
+
+Dois Jackson convivem no classpath: o Boot 4 usa o Jackson 3 (`tools.jackson`) e o LangChain4j traz o Jackson 2
+(`com.fasterxml.jackson`). Os pacotes e groupIds são diferentes, então não colidem. O código próprio usa só o
+Jackson 3 e valida os campos obrigatórios à mão: um `boolean` ausente não pode virar `false` em silêncio.
+
+Também ficam de fora, de propósito, `temperature`, `top_p`, `top_k` e `stop_sequences`: modelos novos
+rejeitam ou ignoram esses parâmetros, e um teste confere que o corpo enviado não os contém. `maxRetries(0)`
+mantém uma chamada ao modelo por etapa, igual ao `modelCalls` da auditoria.

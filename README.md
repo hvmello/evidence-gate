@@ -25,6 +25,21 @@ Requires JDK 21. No API key is needed.
 ./mvnw verify
 ```
 
+## Run with the real model
+
+The default is offline: `ScriptedLlm` stands in for the model, so no key and no cost. To call Claude through
+LangChain4j instead:
+
+```bash
+export ANTHROPIC_API_KEY=...            # environment only, never in application.yml
+export EVIDENCE_GATE_LLM_PROVIDER=anthropic
+./mvnw spring-boot:run
+```
+
+Settings live under `evidence-gate.llm` (`model`, `max-tokens`, `timeout`, `base-url`). With
+`provider=anthropic` and no key the service fails at startup; it never falls back to the scripted model.
+Unit tests never call a real model: they run against a local HTTP stub.
+
 ## Mutation testing
 
 PIT measures how many deliberate code changes (mutants) the tests catch. Scope: `dev.hvmello.evidencegate.gate`,
