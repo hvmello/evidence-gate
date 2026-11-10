@@ -9,8 +9,10 @@ import java.util.regex.Pattern;
 /**
  * Deterministic rules for a draft reply. The model's own opinion of its draft is never consulted.
  *
- * <p>A term list catches what it lists and nothing else: paraphrases and look-alike letters from other
- * alphabets pass, and are measured by the evaluation suite. A human reviews every draft that passes.
+ * <p>A term list catches what it lists and nothing else. Letters separated by spaces or punctuation
+ * ({@code d e p r e s s a o}, {@code p-i-x}) are joined before matching. Arbitrary splits inside a word
+ * ({@code depre ssao}), paraphrases and look-alike letters from other alphabets still pass, and are measured
+ * by the evaluation suite. A human reviews every draft that passes.
  */
 public final class PolicyFilter {
 
@@ -36,7 +38,15 @@ public final class PolicyFilter {
             Pattern.compile("desconto"),
             Pattern.compile("promoc"),
             Pattern.compile(START + "urgente"),
-            Pattern.compile(START + "ultima chance" + END));
+            Pattern.compile(START + "ultima ?chance" + END));
+
+    // Isolated single letters separated by non-alphanumerics, three or more in a row: "d e p r e s s a", "p-i-x".
+    private static final Pattern SPACED_LETTERS = Pattern.compile(
+            START + "\\p{L}(?:[^\\p{L}\\p{N}]+\\p{L}){2,}" + END);
+    // Accents are already folded away: a, e, o, and "é" and "à" become e and a.
+    private static final String ONE_LETTER_WORDS = "aeo";
+    private static final Pattern INNOCENT_WORDS = Pattern.compile(START + "depressa" + END);
+    private static final Pattern SEPARATORS = Pattern.compile("[^\\p{L}\\p{N}]+");
 
     /** Returns the violated rule as a code, or empty when the draft is allowed. */
     public Optional<String> violation(String draft) {
@@ -62,8 +72,47 @@ public final class PolicyFilter {
         if (CONTACT_DATA.matcher(lower).find()) {
             return Optional.of("CONTACT_DATA");
         }
-        return BLOCKED_TERMS.stream().anyMatch(term -> term.matcher(lower).find())
+        return blocked(lower) || SPACED_LETTERS.matcher(lower).results()
+                .anyMatch(run -> blockedRun(SEPARATORS.matcher(run.group()).replaceAll("")))
                 ? Optional.of("BLOCKED_TERM")
                 : Optional.empty();
+    }
+
+    /**
+     * A run can swallow a real one-letter word next to the spaced term ("faca o p i x" joins to "opix"). The whole
+     * run is checked, then the run with such words trimmed off either end. Trimmed forms are not checked inside an
+     * innocent word, so "d e p r e s s a" stays allowed.
+     */
+    private static boolean blockedRun(String joined) {
+        if (blocked(joined)) {
+            return true;
+        }
+        var innocent = INNOCENT_WORDS.matcher(joined).results().toList();
+        var lead = 0;
+        while (lead < joined.length() && ONE_LETTER_WORDS.indexOf(joined.charAt(lead)) >= 0) {
+            lead++;
+        }
+        var tail = joined.length();
+        while (tail > 0 && ONE_LETTER_WORDS.indexOf(joined.charAt(tail - 1)) >= 0) {
+            tail--;
+        }
+        for (var from = 0; from <= lead; from++) {
+            for (var to = joined.length(); to >= Math.max(tail, from + 1); to--) {
+                if (from == 0 && to == joined.length()) {
+                    continue;
+                }
+                var start = from;
+                var end = to;
+                if (innocent.stream().noneMatch(w -> w.start() <= start && end <= w.end())
+                        && blocked(joined.substring(from, to))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean blocked(String text) {
+        return BLOCKED_TERMS.stream().anyMatch(term -> term.matcher(text).find());
     }
 }
