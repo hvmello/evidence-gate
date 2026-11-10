@@ -134,4 +134,10 @@ class RedactorTest {
 
         assertThat(a.payloadSha256()).hasSize(64).isNotEqualTo(b.payloadSha256());
     }
+
+    @Test
+    void oneLetterNameTokensAreNotRedacted() {
+        assertThat(redactWithName("Ana B", "b foi, Ana veio")).isEqualTo("b foi, [PATIENT_NAME] veio");
+        assertThat(redactWithName("Ana Bo", "Bo veio")).isEqualTo("[PATIENT_NAME] veio");
+    }
 }

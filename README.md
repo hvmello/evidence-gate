@@ -25,4 +25,16 @@ Requires JDK 21. No API key is needed.
 ./mvnw verify
 ```
 
+## Mutation testing
+
+PIT measures how many deliberate code changes (mutants) the tests catch. Scope: `dev.hvmello.evidencegate.gate`,
+tested only by the `gate.*Test` classes. Mutators: PIT `DEFAULTS`. The build fails below a mutation score of 85 %.
+
+```bash
+./mvnw test-compile org.pitest:pitest-maven:mutationCoverage
+```
+
+The report is written to `target/pit-reports/index.html`. It is not part of `verify`; CI runs it as a separate step
+and uploads the report when it fails.
+
 Work is tracked in [issues](https://github.com/hvmello/evidence-gate/issues) and follows [this workflow](docs/WORKFLOW.md).
